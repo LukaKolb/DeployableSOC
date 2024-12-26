@@ -1,0 +1,75 @@
+version: '7.9'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - elk
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.7.0
+    container_name: logstash
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+    ports:
+      - "5000:5000"
+      - "5044:5044"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.7.0
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  thehive:
+    image: thehiveproject/thehive:latest
+    container_name: thehive
+    environment:
+      - THEHIVE_ELASTICSEARCH=http://elasticsearch:9200
+    ports:
+      - "9000:9000"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  shuffleio:
+    image: shuffleio/shuffle:latest
+    container_name: shuffleio
+    environment:
+      - SHUFFLE_ELASTICSEARCH=http://elasticsearch:9200
+      - SHUFFLE_THEHIVE=http://thehive:9000
+    ports:
+      - "3333:3333"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+      - thehive
+
+volumes:
+  elasticsearch-data:
+    driver: local
+
+networks:
+  elk:
+    driver: bridge
