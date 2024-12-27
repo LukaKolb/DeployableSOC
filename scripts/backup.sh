@@ -110,18 +110,13 @@ exec &> >(tee -a "$LOG_FILE")
 
 
 ## Prepare folders tree
-mkdir -p ${BACKUP_FOLDER}/{thehive,cortex,cassandra,elasticsearch,nginx,certificates}
+mkdir -p ${BACKUP_FOLDER}/{thehive,cassandra,elasticsearch,nginx,certificates}
 echo "Created folder structure under ${BACKUP_FOLDER}"
 
 ## Copy TheHive data
 echo "Starting TheHive backup..."
 rsync -aW --no-compress ${DOCKER_COMPOSE_PATH}/thehive/ ${BACKUP_FOLDER}/thehive || { echo "TheHive backup failed"; exit 1; }
 echo "TheHive backup completed."
-
-## Copy Cortex data
-echo "Starting Cortex backup..."
-rsync -aW --no-compress ${DOCKER_COMPOSE_PATH}/cortex/ ${BACKUP_FOLDER}/cortex || { echo "Cortex backup failed"; exit 1; }
-echo "Cortex backup completed."
 
 ## Copy Casssandra data
 echo "Starting Cassandra backup..."

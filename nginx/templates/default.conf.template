@@ -21,18 +21,8 @@ server {
     client_header_buffer_size 8k;
 
 
-    location /thehive {
-        proxy_pass http://thehive:9000/thehive;  # Forward requests to TheHive
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        add_header              Strict-Transport-Security "max-age=31536000; includeSubDomains";
-        proxy_http_version      1.1;
-    }
-
-    location /cortex {
-        proxy_pass http://cortex:9001/cortex;  # Forward requests to Cortex
+    location / {
+        proxy_pass http://thehive:9000/;  # Forward requests to TheHive
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

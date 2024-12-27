@@ -112,10 +112,6 @@ docker compose ps | grep -q "Up" && { echo "Docker Compose services are running.
 echo "Restoring TheHive data and configuration..."
 rsync -aW --no-compress ${BACKUP_FOLDER}/thehive/ ${DOCKER_COMPOSE_PATH}/thehive || { echo "TheHive config restore failed"; exit 1; }
 
-# Copy Cortex data
-echo "Restoring Cortex data and configuration..."
-rsync -aW --no-compress ${BACKUP_FOLDER}/cortex/ ${DOCKER_COMPOSE_PATH}/cortex || { echo "Cortex config restore failed"; exit 1; }
-
 # Copy Casssandra data
 echo "Restoring Cassandra data ..."
 rsync -aW --no-compress ${BACKUP_FOLDER}/cassandra/ ${DOCKER_COMPOSE_PATH}/cassandra || { echo "Cassandra data restore failed"; exit 1; }
@@ -135,6 +131,6 @@ rsync -a ${BACKUP_FOLDER}/certificates/ ${DOCKER_COMPOSE_PATH}/certificates  ||
 
 ## Restart services
 echo "Restarting services..."
-docker compose up -d
+docker compose up -d -f ${DOCKER_COMPOSE_PATH}/docker-compose.yml
 
 echo "Restoration process completed at: $(date)"

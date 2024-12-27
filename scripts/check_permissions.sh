@@ -27,17 +27,13 @@ fi
 ## List directories with unexpected permissions (should be 750)
 NON_COMPLIANT_DIRS=$(find ./cassandra ./certificates ./elasticsearch ./nginx ./scripts ./thehive -type d ! -perm 750)
 
-## Check Cortex directory for unexpected permissions (should be 755)
-NON_COMPLIANT_CORTEX_DIRS=$(find ./cortex -type d ! -perm 755)
-
 ## List non-executable files with unexpected permissions (should be 644)
-NON_COMPLIANT_FILES=$(find ./docker-compose.yml ./dot.env.template ./cassandra ./certificates ./cortex ./elasticsearch ./nginx ./thehive -type f ! -perm 644)
+NON_COMPLIANT_FILES=$(find ./docker-compose.yml ./dot.env.template ./cassandra ./certificates ./elasticsearch ./nginx ./thehive -type f ! -perm 644)
 
 ## List executable files with unexpected permissions (should be 755)
 NON_COMPLIANT_EXECUTABLE_FILES=$(find ./scripts -type f ! -perm 755)
 
 if [ -z "${NON_COMPLIANT_DIRS}" ] &&\
-   [ -z "${NON_COMPLIANT_CORTEX_DIRS}" ] &&\
    [ -z "${NON_COMPLIANT_FILES}" ] &&\
    [ -z "${NON_COMPLIANT_EXECUTABLE_FILES}" ]
 then
@@ -46,7 +42,6 @@ then
 else
   warning "The following directories do not have expected permissions:"
   echo -n "${NON_COMPLIANT_DIRS}
-${NON_COMPLIANT_CORTEX_DIRS}
 " | sed '/^$/d' # strip empty lines
 
   warning "The following files do not have expected permissions:"
@@ -64,14 +59,6 @@ ${NON_COMPLIANT_EXECUTABLE_FILES}
               success "Updated directory permissions for: $dir"
           done
       fi
-      # Apply 755 permissions to non-compliant Cortex directories
-      if [ -n "${NON_COMPLIANT_CORTEX_DIRS}" ]; then
-          echo "${NON_COMPLIANT_CORTEX_DIRS}" | while IFS= read -r dir; do
-              chmod 755 "$dir"
-              success "Updated directory permissions for: $dir"
-          done
-      fi
-
       # Apply 644 permissions to non-compliant files
       if [ -n "${NON_COMPLIANT_FILES}" ]; then
           echo "${NON_COMPLIANT_FILES}" | while IFS= read -r file; do

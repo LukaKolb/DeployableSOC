@@ -57,17 +57,21 @@ services:
       - CASSANDRA_CLUSTER_NAME=TheHive
       - CASSANDRA_AUTHENTICATOR=PasswordAuthenticator
       - CASSANDRA_NUM_TOKENS=4
-      - HEAP_NEWSIZE=1280M
-      - MAX_HEAP_SIZE=200M
+      - HEAP_NEWSIZE=512M
+      # https://docs.datastax.com/en/cassandra-oss/3.0/cassandra/operations/opsTuneJVM.html
+      # ¼ of MAX_HEAP_SIZE or 100 times the number of cores
+      - MAX_HEAP_SIZE=3G
+      # max(min(1/2 ram, 1024MB), min(1/4 ram, 8GB)
     volumes:
       - ./cassandra/data:/var/lib/cassandra
       - ./cassandra/logs:/var/log/cassandra
     deploy:
       resources:
         limits:
-          memory: 2G
+          memory: 4G
+          cpus: '3.000'
     # Prevent swap https://docs.docker.com/engine/containers/resource_constraints/#prevent-a-container-from-using-swap
-    memswap_limit: 2G
+    memswap_limit: 4G
     networks:
       - elk
     healthcheck:
@@ -81,7 +85,7 @@ services:
       com.strangebee.stack: "thehive-stack"
       com.strangebee.service: "cassandra"
       com.strangebee.role: "database"
-      com.strangebee.environment: "testing"
+      com.strangebee.environment: "production-thehive"
       com.strangebee.version: "${cassandra_image_version}"
       com.strangebee.dependency: "None"
 
@@ -95,19 +99,20 @@ services:
     environment:
       - |
         JAVA_OPTS=
-          -Xms1280M
-          -Xmx1280M
+          -Xms3000M
+          -Xmx3000M
           -XX:MaxMetaspaceSize=400m
-          -XX:ReservedCodeCacheSize=250m
+          -XX:ReservedCodeCacheSize=400m
     volumes:
-      - ./thehive/config:/etc/thehive:ro
+      - ./thehive/config:/etc/thehive
       - ./thehive/data/files:/opt/thp/thehive/files
       - ./thehive/logs:/var/log/thehive
     deploy:
       resources:
         limits:
-          memory: 2G
-    memswap_limit: 2G
+          memory: 4G
+          cpus: '4.000'
+    memswap_limit: 4G
     networks:
       - elk
     ports:
@@ -127,7 +132,7 @@ services:
       com.strangebee.stack: "thehive-stack"
       com.strangebee.service: "thehive"
       com.strangebee.role: "application"
-      com.strangebee.environment: "testing"
+      com.strangebee.environment: "production-thehive"
       com.strangebee.version: "${thehive_image_version}"
       com.strangebee.dependency: "elasticsearch, cassandra"
 
@@ -153,12 +158,11 @@ services:
           cpus: '1.000'
     depends_on:
       - thehive
-      
     labels:
       com.strangebee.stack: "thehive-stack"
       com.strangebee.service: "nginx"
       com.strangebee.role: "reverse proxy"
-      com.strangebee.environment: "testing"
+      com.strangebee.environment: "production-thehive"
       com.strangebee.version: "${nginx_image_version}"
       com.strangebee.dependency: "thehive"
 

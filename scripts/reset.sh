@@ -13,7 +13,7 @@ then
   docker compose down
 
   ## Delete folder contents
-  DIRECTORIES="./cassandra/data ./cassandra/logs  ./elasticsearch/data ./elasticsearch/logs  ./thehive/data/files ./thehive/logs ./cortex/logs"
+  DIRECTORIES="./cassandra/data ./cassandra/logs  ./elasticsearch/data ./elasticsearch/logs  ./thehive/data/files ./thehive/logs"
 
 
   for D in ${DIRECTORIES}
@@ -24,7 +24,6 @@ then
 
   ## DELETE secret.conf FILES
   rm ./thehive/config/secret.conf
-  rm ./cortex/config/secret.conf
   success "secret files deleted."
 
   ## DELETE cert files
@@ -50,9 +49,6 @@ then
     [[ $? -ne 0 ]] && info "Run this command with root privileges to complete the reset process:\n
     # find . ! -user ${CURRENT_USER_ID} -o ! -group ${CURRENT_GROUP_ID} -exec chown ${CURRENT_USER_ID}:${CURRENT_GROUP_ID} {} \; "
   fi
-
-  rm -rf ./cortex/logs/*
-  success "Cortex logs removed"
 
 else
   exit 0
