@@ -15,6 +15,12 @@ services:
       - "9300:9300"
     networks:
       - elk
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f elasticsearch:9200/_cat/health || exit 1"]
+      start_period: 40s
+      interval: 2s
+      timeout: 1s
+      retries: 5
 
   logstash:
     image: docker.elastic.co/logstash/logstash:8.7.0
