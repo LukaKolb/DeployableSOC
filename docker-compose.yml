@@ -52,20 +52,6 @@ services:
     depends_on:
       - elasticsearch
 
-  shuffleio:
-    image: shuffleio/shuffle:latest
-    container_name: shuffleio
-    environment:
-      - SHUFFLE_ELASTICSEARCH=http://elasticsearch:9200
-      - SHUFFLE_THEHIVE=http://thehive:9000
-    ports:
-      - "3333:3333"
-    networks:
-      - elk
-    depends_on:
-      - elasticsearch
-      - thehive
-
 volumes:
   elasticsearch-data:
     driver: local
