@@ -78,7 +78,7 @@ services:
       timeout: 1s
       retries: 3
     labels:
-      com.strangebee.stack: "thehive-cortex-stack"
+      com.strangebee.stack: "thehive-stack"
       com.strangebee.service: "cassandra"
       com.strangebee.role: "database"
       com.strangebee.environment: "testing"
@@ -124,7 +124,7 @@ services:
       cassandra:
         condition: service_healthy
     labels:
-      com.strangebee.stack: "thehive-cortex-stack"
+      com.strangebee.stack: "thehive-stack"
       com.strangebee.service: "thehive"
       com.strangebee.role: "application"
       com.strangebee.environment: "testing"
@@ -153,14 +153,14 @@ services:
           cpus: '1.000'
     depends_on:
       - thehive
-      - cortex
+      
     labels:
-      com.strangebee.stack: "thehive-cortex-stack"
+      com.strangebee.stack: "thehive-stack"
       com.strangebee.service: "nginx"
       com.strangebee.role: "reverse proxy"
       com.strangebee.environment: "testing"
       com.strangebee.version: "${nginx_image_version}"
-      com.strangebee.dependency: "thehive, cortex"
+      com.strangebee.dependency: "thehive"
 
 
 
