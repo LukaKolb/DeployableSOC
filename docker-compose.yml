@@ -8,7 +8,7 @@ services:
       - discovery.type=single-node
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
     volumes:
-      - elasticsearch-data:/usr/share/elasticsearch/data
+      - elasticsearch-data:/usr/share/dvolume/elasticsearch/data
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -19,7 +19,7 @@ services:
     image: docker.elastic.co/logstash/logstash:8.7.0
     container_name: logstash
     volumes:
-      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+      - ./logstash.conf:/usr/share/dvolume/logstash/pipeline/logstash.conf:ro
     ports:
       - "5000:5000"
       - "5044:5044"
